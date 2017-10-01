@@ -1,0 +1,3 @@
+[submodule "uni-common-tools"]
+	path = uni-common-tools
+	url = https://github.com/rate0621/uni-common-tools.git
