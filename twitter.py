@@ -5,6 +5,8 @@ import uni_common_tools.ChunithmNet as ChunithmNet
 
 import sys
 
+import lib.PrepareChain as PrepareChain
+
 class twitt():
   def __init__(self):
     # 今はファイルから読み込んでいるけどデプロイするときはherokuの環境変数に入れる
@@ -13,9 +15,9 @@ class twitt():
 
   def get_home_timeline(self):
     params = {}
-    req = self.twitter.get("https://api.twitter.com/1.1/statuses/home_timeline.json", params = params)
+    res = self.twitter.get("https://api.twitter.com/1.1/statuses/home_timeline.json", params = params)
 
-    timeline = json.loads(req.text)
+    timeline = json.loads(res.text)
 
     for tweet in timeline:
       print (tweet["text"])
@@ -37,12 +39,45 @@ class twitt():
 
   def post_tweet(self, text):
     params = {"status": text}
-    req = self.twitter.post("https://api.twitter.com/1.1/statuses/update.json", params=params)
-    print (req)
+    res = self.twitter.post("https://api.twitter.com/1.1/statuses/update.json", params=params)
+    print (res)
+
+  def get_tweet_including_words(self, search_word):
+    '''
+    引数で渡した単語を含むツイートを検索し、
+    tweet.txtに吐き出す。
+    '''
+
+    url = "https://api.twitter.com/1.1/search/tweets.json?"
+    params = {
+      #"q": unicode(search_words, "utf-8"),
+      "q": search_word.encode("utf-8"),
+      "lang": "ja",
+      "result_type": "recent",
+      "count": "100"
+    }
+
+    res = self.twitter.get(url, params = params)
+    tweets = json.loads(res.text)
+    with open("lib/tweet.txt", "w") as f:
+      for tweet in tweets["statuses"]:
+        tweet_text = (tweet["text"])
+        if "http" in tweet_text:
+          tweet_text = tweet_text.split("http", 1)[0]
+          tweet_text = tweet_text.split("@")[0]
+          tweet_text = tweet_text.split("RT")[0]
+
+        f.write(tweet_text)
+        f.flush()
+
+    pc = PrepareChain.PrepareChain("tweet.txt")
+    triplet_freqs = pc.make_triplet_freqs()
+    pc.save(triplet_freqs, True)
 
 
 if __name__ == '__main__':
   tw = twitt()
+  tw.get_tweet_including_words("チュウニズム")
   #tw.get_home_timeline()
-  tw.tweet_last_playlog()
+  #tw.tweet_last_playlog()
   #tw.post_tweet("this is test")
