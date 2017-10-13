@@ -3,6 +3,7 @@ from pytz import timezone
 from datetime import datetime
 import json
 import authkey
+import re
 import uni_common_tools.ChunithmNet as ChunithmNet
 
 import sys
@@ -50,8 +51,9 @@ class twitt():
 
   def get_tweet_including_words(self, search_word):
     '''
-    引数で渡した単語を含むツイートを検索し、
-    tweet.txtに吐き出す。
+    引数で渡した単語を含むツイートを取得する
+    @param search_word(string)
+    @return tweet_list(json)
     '''
 
     url = "https://api.twitter.com/1.1/search/tweets.json?"
@@ -97,13 +99,35 @@ class twitt():
     }
 
     res = self.twitter.get(url, params = params)
-    tweets = json.loads(res.text)
+    tweet_list = json.loads(res.text)
 
+    return tweet_list
+
+  def output_to_file(self, tweet_list):
+    """
+    get_tweet_specific_userやget_tweet_including_wordsなどから返ってきたtweet_listをテキストファイルに出力
+    @param tweet_list(json)
+    @return file_name(string)
+    """
+
+    file_name = "lib/tweet.txt"
+
+    with open(file_name, "w") as f:
+      for tweet in tweet_list:
+        tweet_text = tweet["text"]
+        tweet_text = re.sub(r'https?://[\w/:%#\$&\?\(\)~\.=\+\-…]+', "", tweet_text)  # http(s)的な文字列の削除
+        tweet_text = re.sub(r'@\w+', "", tweet_text) # 「@hogehoge 今日暇？」 を、「今日暇？」に書き換え
+
+        f.write(tweet_text)
+        f.flush()
+    
+    return file_name
 
 if __name__ == '__main__':
   tw = twitt()
   #tw.get_tweet_including_words("リーダブルコード")
-  tw.get_tweet_specific_user("chatrate")
+  tweet_list = tw.get_tweet_specific_user("chatrate")
+  file_name = tw.output_to_file(tweet_list)
   #tw.get_tweet_including_words("リーダブルコード")
   #tw.get_home_timeline()
   #tw.tweet_last_playlog()
