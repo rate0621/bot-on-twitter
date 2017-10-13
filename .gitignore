@@ -3,3 +3,4 @@ authkey.py
 __pycache__
 lib/chain.db
 lib/tweet.txt
+lib/schema.sql
