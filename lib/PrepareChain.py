@@ -11,7 +11,7 @@ import MeCab
 import sqlite3
 from collections import defaultdict
 
-import sys
+import sys, os
 
 #class PrepareChain(object):
 class PrepareChain():
@@ -22,8 +22,9 @@ class PrepareChain():
     BEGIN = u"__BEGIN_SENTENCE__"
     END = u"__END_SENTENCE__"
 
-    DB_PATH = "chain.db"
-    DB_SCHEMA_PATH = "schema.sql"
+    here = os.path.join( os.path.dirname(os.path.abspath(__file__)))
+    DB_PATH = here + "/chain.db"
+    DB_SCHEMA_PATH = here +"/schema.sql"
 
     def __init__(self, file_name):
         u"""
@@ -94,6 +95,7 @@ class PrepareChain():
         """
         morphemes = []
         #sentence = sentence.encode("utf-8")
+        self.tagger.parse('')
         node = self.tagger.parseToNode(sentence)
         while node:
             if node.posid != 0:

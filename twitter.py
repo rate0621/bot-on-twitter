@@ -1,4 +1,6 @@
 from requests_oauthlib import OAuth1Session
+from pytz import timezone
+from datetime import datetime
 import json
 import authkey
 import uni_common_tools.ChunithmNet as ChunithmNet
@@ -23,19 +25,23 @@ class twitt():
       print (tweet["text"])
 
   def tweet_last_playlog(self):
-    cn = ChunithmNet.ChunithmNet("", "")
+
+    args = sys.argv
+    cn = ChunithmNet.ChunithmNet(args[1], args[2])
     play_logs = cn.get_playlog()
     send_text = ""
+    play_date = ""
     for play_log in play_logs:
-      send_text = "【チュウニズム リザルト自動呟くマン】\nプレイ日時:" + play_log["play_date"] + "\n楽曲名:" + play_log["music_name"] + "\nスコア:" + play_log["score"]
+      #send_text = "【チュウニズム リザルト自動呟くマン】\nプレイ日時:" + play_log["play_date"] + "\n楽曲名:" + play_log["music_name"] + "\nスコア:" + play_log["score"]
 
-      #print (play_log["track_number"])
-      #print (play_log["play_date"] + "に")
-      #print (play_log["music_name"] + "をプレイした結果")
-      #print (play_log["score"] + "でした")
+      play_date = play_log["play_date"]
+      print (play_date)
       break
 
-    self.post_tweet(send_text)
+    now_date = datetime.now(timezone('Asia/Tokyo')).strftime("%Y/%m/%d %H:%M:%S")
+    print (play_date)
+    print (now_date)
+    #self.post_tweet(send_text)
 
   def post_tweet(self, text):
     params = {"status": text}
@@ -70,14 +76,35 @@ class twitt():
         f.write(tweet_text)
         f.flush()
 
-    pc = PrepareChain.PrepareChain("tweet.txt")
+    pc = PrepareChain.PrepareChain("lib/tweet.txt")
     triplet_freqs = pc.make_triplet_freqs()
     pc.save(triplet_freqs, True)
+
+  def get_tweet_specific_user(self, screen_name):
+    """
+    特定ユーザのツイートを取得する
+    @param  screen_name(string)
+    @return tweet_list(json)
+    """
+
+    url = "https://api.twitter.com/1.1/statuses/user_timeline.json"
+    params = {
+      #"q": unicode(search_words, "utf-8"),
+      "screen_name": screen_name.encode("utf-8"),
+      "include_rts": "false",
+      "exclude_replies": "false",
+      "count": "100"
+    }
+
+    res = self.twitter.get(url, params = params)
+    tweets = json.loads(res.text)
 
 
 if __name__ == '__main__':
   tw = twitt()
-  tw.get_tweet_including_words("チュウニズム")
+  #tw.get_tweet_including_words("リーダブルコード")
+  tw.get_tweet_specific_user("chatrate")
+  #tw.get_tweet_including_words("リーダブルコード")
   #tw.get_home_timeline()
   #tw.tweet_last_playlog()
   #tw.post_tweet("this is test")
