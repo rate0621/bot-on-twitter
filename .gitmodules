@@ -1,3 +1,4 @@
 [submodule "uni_common_tools"]
 	path = uni_common_tools
 	url = https://github.com/rate0621/uni-common-tools.git
+  ignore = dirty

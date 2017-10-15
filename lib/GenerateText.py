@@ -9,6 +9,8 @@ import sqlite3
 import random
 import sys
 
+here = os.path.join( os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(here)
 from PrepareChain import PrepareChain
 
 numb_sentence = 5
@@ -19,7 +21,7 @@ class GenerateText(object):
     """
 
     # def __init__(self, n=10):
-    def __init__(self):
+    def __init__(self, numb_sentence):
         # print ("sentence_numb=" + str(numb_sentence))
         u"""
         初期化メソッド
