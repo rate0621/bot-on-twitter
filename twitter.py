@@ -22,6 +22,11 @@ class twitt():
     
 
   def get_home_timeline(self):
+    """
+    自分のタイムラインを取得
+    @param なし
+    @return なし
+    """
     params = {}
     res = self.twitter.get("https://api.twitter.com/1.1/statuses/home_timeline.json", params = params)
 
@@ -73,6 +78,11 @@ class twitt():
 
 
   def post_tweet(self, text):
+    """
+    引数で渡された文字列を呟く
+    @param text(string)
+    @return res(int?)
+    """
     params = {"status": text}
     res = self.twitter.post("https://api.twitter.com/1.1/statuses/update.json", params=params)
     print (res)
@@ -152,6 +162,38 @@ class twitt():
     
     return file_name
 
+  def tweet_markov_from_specific_user(self, screen_name):
+    """
+    渡されたscreen_name（ユーザ名）の過去のツイートを取得してマルコフ連鎖を用いて文章を生成して呟く
+    @param  screen_name(string)
+    @return なし
+    """
+    tweet_list = self.get_tweet_specific_user(screen_name)
+    file_name = self.output_to_file(tweet_list)
+    chain = PrepareChain.PrepareChain(file_name)
+    triplet_freqs = chain.make_triplet_freqs()
+    chain.save(triplet_freqs, True)
+    generator = GenerateText.GenerateText(2)
+    gen_text = generator.generate()
+    #tw.post_tweet(gen_text + "【このツイートは自動生成されたものです】")
+    print (gen_text + "【このツイートは自動生成されたものです】")
+
+  def tweet_markov_from_specific_word(self, search_word):
+    """
+    渡されたsearch_word（検索文字列）を含むツイートを取得してマルコフ連鎖を用いて文章を生成して呟く
+    @param  search_word(string)
+    @return なし
+    """
+    tweet_list = self.get_tweet_including_words(search_word)
+    file_name = self.output_to_file(tweet_list)
+    chain = PrepareChain.PrepareChain(file_name)
+    triplet_freqs = chain.make_triplet_freqs()
+    chain.save(triplet_freqs, True)
+    generator = GenerateText.GenerateText(2)
+    gen_text = generator.generate()
+    #tw.post_tweet(gen_text + "【このツイートは自動生成されたものです】")
+    print (gen_text + "【このツイートは自動生成されたものです】")
+
   def stream(self):
     """
     いったん以下のコードで自分の呟きをリアルタイムで取得できる
@@ -169,23 +211,11 @@ class twitt():
 
 if __name__ == '__main__':
   tw = twitt()
-
-  ### ツイッターからツイートを拾ってきてマルコフ連鎖とかする
-  #tweet_list = tw.get_tweet_including_words("チュウニズム")
-  #tweet_list = tweet_list = tw.get_tweet_specific_user("chatrate")
-  #file_name = tw.output_to_file(tweet_list)
-  #chain = PrepareChain.PrepareChain(file_name)
-  #triplet_freqs = chain.make_triplet_freqs()
-  #chain.save(triplet_freqs, True)
-  #generator = GenerateText.GenerateText(2)
-  #gen_text = generator.generate()
-  #tw.post_tweet(gen_text + "【このツイートは自動生成されたものです】")
-
-  #tw.get_home_timeline()
+  #tw.tweet_markov_from_specific_user("chatrate")
+  tw.tweet_markov_from_specific_word("チュウニズム")
 
   ### ウニのプレイログを呟く
-  tw.tweet_playlog()
-
+  #tw.tweet_playlog()
 
   ### ストリーミング
   #tw.stream()
