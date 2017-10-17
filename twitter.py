@@ -9,7 +9,6 @@ import re
 import uni_common_tools.ChunithmNet as ChunithmNet
 from pprint import pprint
 
-
 import sys
 
 import lib.PrepareChain as PrepareChain
@@ -20,6 +19,20 @@ class twitt():
     # 今はファイルから読み込んでいるけどデプロイするときはherokuの環境変数に入れる
     self.twitter = OAuth1Session(authkey.CONSUMER_KEY, authkey.CONSUMER_SECRET, authkey.ACCESS_TOKEN, authkey.ACCESS_TOKEN_SECRET)
     
+  def get_userid_from_screen_name(self, screen_name):
+    """
+    screen_nameからuseridを取得する
+    @param  screen_name(string)
+    @return user_id(string)
+    """
+    params = {
+      "screen_name": screen_name
+    }
+    res = self.twitter.get("https://api.twitter.com/1.1/users/show.json", params = params)
+
+    timeline = json.loads(res.text)
+    user_id = timeline["id_str"]
+    return user_id
 
   def get_home_timeline(self):
     """
@@ -194,25 +207,50 @@ class twitt():
     #tw.post_tweet(gen_text + "【このツイートは自動生成されたものです】")
     print (gen_text + "【このツイートは自動生成されたものです】")
 
-  def stream(self):
+  def streaming(self, follow=None, track=None):
     """
     いったん以下のコードで自分の呟きをリアルタイムで取得できる
     受け取ったテキストによって色々処理をわけたりできそうで夢が広がるけどいったん保留
+    注意点として、垂れ流す対象のユーザを指定できるが、screen_nameではなく、user_idのため、
+    get_userid_from_screen_nameからuser_idを引っ張ってきてから使うこと
     """
-    url = "https://stream.twitter.com/1.1/statuses/filter.json"
-    #res = self.twitter.post(url, stream=True, data={"follow":"chatrate"})
-    res = self.twitter.post(url, stream=True, data={"follow":"521317771"})
 
+    # 引数チェック
+    if all((follow is None, track is None)):
+      raise ValueError({'message': "No filter parameters specified."})
+
+    data = {}
+    if follow is not None:
+      data['follow'] = ','.join(follow)
+    if track is not None:
+      data['track'] = ','.join(track)
+
+
+    url = "https://stream.twitter.com/1.1/statuses/filter.json"
+    res = self.twitter.post(url, stream=True, data=data)
+    print ("準備OK")
     for line in res.iter_lines():
       if line:
         decode_line = json.loads(line.decode("utf-8"))
-        print (decode_line["text"])
+        yield decode_line
+
+  def user_stream(self):
+    url = "https://userstream.twitter.com/1.1/user.json"
+
+    res = self.twitter.get(url, stream=True)
+
+    for line in res.iter_lines():
+      if line:
+        print (line)
 
 
 if __name__ == '__main__':
   tw = twitt()
   #tw.tweet_markov_from_specific_user("chatrate")
-  tw.tweet_markov_from_specific_word("チュウニズム")
+  #tw.tweet_markov_from_specific_word("チュウニズム")
+
+  #tw.get_userid_from_screen_name("chatrate")
+  tw.user_stream()
 
   ### ウニのプレイログを呟く
   #tw.tweet_playlog()
