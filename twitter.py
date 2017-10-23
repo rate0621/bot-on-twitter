@@ -11,8 +11,8 @@ from pprint import pprint
 
 import sys
 
-import lib.PrepareChain as PrepareChain
-import lib.GenerateText as GenerateText
+import lib.markov.PrepareChain as PrepareChain
+import lib.markov.GenerateText as GenerateText
 
 class twitt():
   def __init__(self):
@@ -247,10 +247,10 @@ class twitt():
 if __name__ == '__main__':
   tw = twitt()
   #tw.tweet_markov_from_specific_user("chatrate")
-  #tw.tweet_markov_from_specific_word("チュウニズム")
+  tw.tweet_markov_from_specific_word("チュウニズム")
 
   #tw.get_userid_from_screen_name("chatrate")
-  tw.user_stream()
+  #tw.user_stream()
 
   ### ウニのプレイログを呟く
   #tw.tweet_playlog()

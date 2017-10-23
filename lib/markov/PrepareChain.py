@@ -242,7 +242,7 @@ class TestFunctions(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # unittest.main()
+    #unittest.main()
 
     param = sys.argv
     if (len(param) != 2):

@@ -10,6 +10,7 @@ import sys
 import lib.PrepareChain as PrepareChain
 import lib.GenerateText as GenerateText
 
+# ここでimportしているのは公式謹製のものではなく、自分で作ったtwitterライブラリ
 import twitter as twitter
 
 tw = twitter.twitt()

@@ -171,6 +171,6 @@ if __name__ == '__main__':
 
     numb_sentence = int(param[1])
 
-    generator = GenerateText()
+    generator = GenerateText(numb_sentence)
     gen_txt = generator.generate()
     print (gen_txt) 
