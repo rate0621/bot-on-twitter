@@ -2,19 +2,23 @@ from requests_oauthlib import OAuth1Session
 from pytz import timezone
 from datetime import datetime, timedelta
 from time import sleep
+import sys, os
+
 import pytz
 import json
-import authkey
 import re
-import uni_common_tools.ChunithmNet as ChunithmNet
 from pprint import pprint
 
-import sys
+# twitter.pyが置かれているディレクトリ直下をライブラリパスとして追加
+here = os.path.join( os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(here)
 
+import authkey
+import uni_common_tools.ChunithmNet as ChunithmNet
 import lib.markov.PrepareChain as PrepareChain
 import lib.markov.GenerateText as GenerateText
 
-class twitt():
+class Twitter():
   def __init__(self):
     # 今はファイルから読み込んでいるけどデプロイするときはherokuの環境変数に入れる
     self.twitter = OAuth1Session(authkey.CONSUMER_KEY, authkey.CONSUMER_SECRET, authkey.ACCESS_TOKEN, authkey.ACCESS_TOKEN_SECRET)
@@ -150,7 +154,7 @@ class twitt():
     @return file_name(string)
     """
 
-    file_name = "lib/tweet.txt"
+    file_name = here + "/lib/tweet.txt"
 
     with open(file_name, "w") as f:
       # https://api.twitter.com/1.1/search/tweets.jsonから取得したときのループ
@@ -245,7 +249,7 @@ class twitt():
 
 
 if __name__ == '__main__':
-  tw = twitt()
+  tw = Twitter()
   #tw.tweet_markov_from_specific_user("chatrate")
   tw.tweet_markov_from_specific_word("チュウニズム")
 

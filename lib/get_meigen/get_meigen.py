@@ -6,6 +6,8 @@ import re
 import codecs
 from bs4 import BeautifulSoup
 
+here = os.path.join( os.path.dirname(os.path.abspath(__file__)))
+
 url = "http://www.iwako-light.com/entry/diary/post-3196/"
 
 req = urllib.request.Request(url, None)
@@ -17,10 +19,10 @@ with urllib.request.urlopen(req) as res:
 soup = BeautifulSoup(html, "html.parser")
 hoge = soup.find_all("blockquote")
 
+file_path = here + "/../../data/meigen.text"
 for i in hoge:
-  file_name = "../../data/meigen.text"
-  with codecs.open(file_name, "a", "utf-8") as f:
-    f.write(re.sub("[「|」]", "", i.text))
+  with codecs.open(file_path, "a", "utf-8") as f:
+    f.write(re.sub("[「|」]", "", i.text) + "\n")
     f.flush()
 
 
