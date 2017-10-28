@@ -52,19 +52,18 @@ class Twitter():
     for tweet in timeline:
       print (tweet["text"])
 
-  def tweet_playlog(self):
+  def tweet_playlog(self, _id, passwd):
     """
-    現在時刻から、1時間以内にプレイしたリザルトをツイッターに呟く
-    @param なし
+    現在時刻から、３０分以内にプレイしたリザルトをツイッターに呟く
+    @param _id, passwd （aimeのIDとパスワード）
     @return なし
     """
-    args = sys.argv
-    cn = ChunithmNet.ChunithmNet(args[1], args[2])
+    cn = ChunithmNet.ChunithmNet(_id, passwd)
     #play_logs = cn.get_playlog_detail()
 
     now = datetime.now()
-    hour = timedelta(hours=6)
-    since = now - hour
+    past = timedelta(minutes=30)
+    since = now - past
 
     ## datetime.nowで得られた日付を[yyyy-mm-dd HH:MM]の形式にするためいったん文字列にする
     now = now.strftime('%Y-%m-%d %H:%M')
@@ -85,7 +84,7 @@ class Twitter():
         send_text = "【チュウニズム リザルト】\nプレイ日時:" + play_log["play_date"] + "\n曲名:" + play_log["music_title"] + "\nMAX COMBO:" + play_log["max_combo"] + "\nScore:" + play_log["score"] + "\nJC:" + play_log["justice_critical"] + "\nJ:" + play_log["justice"] + "\nAttack:" + play_log["attack"] + "\nMiss:" + play_log["miss"]
         self.post_tweet(send_text)
         print (send_text)
-        sleep (5)
+        sleep (120)
         num = num + 1
         continue
       else:
