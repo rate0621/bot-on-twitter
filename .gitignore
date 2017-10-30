@@ -1,5 +1,6 @@
 authkey.py
 .python-version
 __pycache__
-lib/chain.db
+lib/markov/chain.db
 lib/tweet.txt
+auth_file/
