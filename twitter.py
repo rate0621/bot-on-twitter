@@ -153,7 +153,7 @@ class Twitter():
     @return file_name(string)
     """
 
-    file_name = here + "/lib/tweet.txt"
+    file_name = here + "/common_lib/tweet.txt"
 
     with open(file_name, "w") as f:
       # https://api.twitter.com/1.1/search/tweets.jsonから取得したときのループ
