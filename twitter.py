@@ -14,9 +14,9 @@ here = os.path.join( os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(here)
 
 import authkey
-import uni_common_tools.ChunithmNet as ChunithmNet
-import lib.markov.PrepareChain as PrepareChain
-import lib.markov.GenerateText as GenerateText
+import common_lib.uni_common_tools.ChunithmNet as ChunithmNet
+import common_lib.markov.PrepareChain as PrepareChain
+import common_lib.markov.GenerateText as GenerateText
 
 class Twitter():
   def __init__(self):
