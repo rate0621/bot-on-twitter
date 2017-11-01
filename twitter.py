@@ -13,7 +13,7 @@ from pprint import pprint
 here = os.path.join( os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(here)
 
-import authkey
+import auth_file.authkey as authkey
 import common_lib.uni_common_tools.ChunithmNet as ChunithmNet
 import common_lib.markov.PrepareChain as PrepareChain
 import common_lib.markov.GenerateText as GenerateText
@@ -52,44 +52,44 @@ class Twitter():
     for tweet in timeline:
       print (tweet["text"])
 
-  def tweet_playlog(self, _id, passwd):
-    """
-    現在時刻から、３０分以内にプレイしたリザルトをツイッターに呟く
-    @param _id, passwd （aimeのIDとパスワード）
-    @return なし
-    """
-    cn = ChunithmNet.ChunithmNet(_id, passwd)
-    #play_logs = cn.get_playlog_detail()
-
-    now = datetime.now()
-    past = timedelta(minutes=30)
-    since = now - past
-
-    ## datetime.nowで得られた日付を[yyyy-mm-dd HH:MM]の形式にするためいったん文字列にする
-    now = now.strftime('%Y-%m-%d %H:%M')
-    since = since.strftime('%Y-%m-%d %H:%M')
-
-    ## 比較するためもう一度日付型に戻す
-    now = datetime.strptime(now, '%Y-%m-%d %H:%M')
-    since = datetime.strptime(since, '%Y-%m-%d %H:%M')
-
-    num = 0
-    while 1:
-      play_log = cn.get_playlog_detail(num)
-
-      # プレイした時間が、1時間以内かをチェック。もし範囲外ならその時点でループを抜ける
-      play_date = play_log["play_date"]
-      play_date = datetime.strptime(play_date, '%Y-%m-%d %H:%M')
-      if since < play_date < now:
-        send_text = "【チュウニズム リザルト】\nプレイ日時:" + play_log["play_date"] + "\n曲名:" + play_log["music_title"] + "\nMAX COMBO:" + play_log["max_combo"] + "\nScore:" + play_log["score"] + "\nJC:" + play_log["justice_critical"] + "\nJ:" + play_log["justice"] + "\nAttack:" + play_log["attack"] + "\nMiss:" + play_log["miss"]
-        self.post_tweet(send_text)
-        print (send_text)
-        sleep (120)
-        num = num + 1
-        continue
-      else:
-        print ("時間範囲外のためループを抜ける")
-        break
+#  def tweet_playlog(self, _id, passwd):
+#    """
+#    現在時刻から、３０分以内にプレイしたリザルトをツイッターに呟く
+#    @param _id, passwd （aimeのIDとパスワード）
+#    @return なし
+#    """
+#    cn = ChunithmNet.ChunithmNet(_id, passwd)
+#    #play_logs = cn.get_playlog_detail()
+#
+#    now = datetime.now()
+#    past = timedelta(minutes=30)
+#    since = now - past
+#
+#    ## datetime.nowで得られた日付を[yyyy-mm-dd HH:MM]の形式にするためいったん文字列にする
+#    now = now.strftime('%Y-%m-%d %H:%M')
+#    since = since.strftime('%Y-%m-%d %H:%M')
+#
+#    ## 比較するためもう一度日付型に戻す
+#    now = datetime.strptime(now, '%Y-%m-%d %H:%M')
+#    since = datetime.strptime(since, '%Y-%m-%d %H:%M')
+#
+#    num = 0
+#    while 1:
+#      play_log = cn.get_playlog_detail(num)
+#
+#      # プレイした時間が、1時間以内かをチェック。もし範囲外ならその時点でループを抜ける
+#      play_date = play_log["play_date"]
+#      play_date = datetime.strptime(play_date, '%Y-%m-%d %H:%M')
+#      if since < play_date < now:
+#        send_text = "【チュウニズム リザルト】\nプレイ日時:" + play_log["play_date"] + "\n曲名:" + play_log["music_title"] + "\nMAX COMBO:" + play_log["max_combo"] + "\nScore:" + play_log["score"] + "\nJC:" + play_log["justice_critical"] + "\nJ:" + play_log["justice"] + "\nAttack:" + play_log["attack"] + "\nMiss:" + play_log["miss"]
+#        self.post_tweet(send_text)
+#        print (send_text)
+#        sleep (120)
+#        num = num + 1
+#        continue
+#      else:
+#        print ("時間範囲外のためループを抜ける")
+#        break
 
 
 
@@ -146,7 +146,7 @@ class Twitter():
 
     return tweet_list
 
-  def output_to_file(self, tweet_list):
+  def __output_to_file(self, tweet_list):
     """
     get_tweet_specific_userやget_tweet_including_wordsなどから返ってきたtweet_listをテキストファイルに出力
     @param tweet_list(json)
@@ -185,7 +185,7 @@ class Twitter():
     @return なし
     """
     tweet_list = self.get_tweet_specific_user(screen_name)
-    file_name = self.output_to_file(tweet_list)
+    file_name = self.__output_to_file(tweet_list)
     chain = PrepareChain.PrepareChain(file_name)
     triplet_freqs = chain.make_triplet_freqs()
     chain.save(triplet_freqs, True)
@@ -201,7 +201,7 @@ class Twitter():
     @return なし
     """
     tweet_list = self.get_tweet_including_words(search_word)
-    file_name = self.output_to_file(tweet_list)
+    file_name = self.__output_to_file(tweet_list)
     chain = PrepareChain.PrepareChain(file_name)
     triplet_freqs = chain.make_triplet_freqs()
     chain.save(triplet_freqs, True)
