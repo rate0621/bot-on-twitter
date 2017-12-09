@@ -34,7 +34,17 @@ while 1:
   play_date = play_log["play_date"]
   play_date = datetime.strptime(play_date, '%Y-%m-%d %H:%M')
   if since < play_date < now:
-    send_text = "【チュウニズム リザルト】\nプレイ日時:" + play_log["play_date"] + "\n曲名:" + play_log["music_title"] + "\nMAX COMBO:" + play_log["max_combo"] + "\nScore:" + play_log["score"] + "\nJC:" + play_log["justice_critical"] + "\nJ:" + play_log["justice"] + "\nAttack:" + play_log["attack"] + "\nMiss:" + play_log["miss"]
+    send_text = \
+"【チュウニズム リザルト】\n\
+PlayDate     ：" + play_log["play_date"] + "\n\
+Music          ：" + play_log["music_title"] + "\n\
+MaxCombo ：" + play_log["max_combo"] + "\n\
+Score          ：" + play_log["score"] + "\n\
+JC               ：" + play_log["justice_critical"] + "\n\
+J              　：" + play_log["justice"] + "\n\
+Attack　　  ：" + play_log["attack"] + "\n\
+Miss            ：" + play_log["miss"]
+
     tw.post_tweet(send_text)
     print (send_text)
     sleep (120)
