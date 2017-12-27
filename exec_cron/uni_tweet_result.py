@@ -1,5 +1,6 @@
 import sys, os
 from datetime import datetime, timedelta
+from time import sleep
 
 # 一個上の階層ディレクトリをライブラリパスとして追加
 here = os.path.join( os.path.dirname(os.path.abspath(__file__)))
