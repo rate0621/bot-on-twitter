@@ -47,7 +47,21 @@ Attack　　  ：" + play_log["attack"] + "\n\
 Miss            ：" + play_log["miss"]
 
     tw.post_tweet(send_text)
-    print (send_text)
+
+    # 自分のプレイデータを吐き出しておく。別関数としてきったほうがいい気がするけどいったんここにべた書きで
+    # なお、playlog.tsvはgitで管理しない
+    play_log_filepath = here + '/../data/uni_datas/mydatas/playlog/playlog.tsv'
+    with open(play_log_filepath, 'a') as fh:
+      fh.write(play_log["play_date"] + "\t" + \
+        play_log["music_title"] + "\t" + \
+        play_log["max_combo"] + "\t" + \
+        play_log["score"] + "\t" + \
+        play_log["justice_critical"] + "\t" + \
+        play_log["justice"] + "\t" + \
+        play_log["attack"] + "\t" + \
+        play_log["miss"] + "\n"
+      )
+
     sleep (120)
     num = num + 1
     continue

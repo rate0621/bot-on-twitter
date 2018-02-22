@@ -5,3 +5,4 @@ common_lib/markov/chain.db
 lib/tweet.txt
 auth_file/
 .DS_Store
+playlog.tsv
