@@ -34,9 +34,17 @@ while 1:
   # プレイした時間が、1時間以内かをチェック。もし範囲外ならその時点でループを抜ける
   play_date = play_log["play_date"]
   play_date = datetime.strptime(play_date, '%Y-%m-%d %H:%M')
+
+  is_newrecord   = 0
+  newrecord_text = ''
+  if play_log['is_newrecord'] is not None:
+    is_newrecord = 1
+    newrecord_text = "【NEW RECORD!!】\n"
+
+  #if 1:
   if since < play_date < now:
     send_text = \
-"【チュウニズム リザルト】\n\
+"【チュウニズム リザルト】\n" + newrecord_text + " \
 PlayDate     ：" + play_log["play_date"] + "\n\
 Music          ：" + play_log["music_title"] + "\n\
 MaxCombo ：" + play_log["max_combo"] + "\n\
@@ -50,6 +58,7 @@ Miss            ：" + play_log["miss"]
 
     # 自分のプレイデータを吐き出しておく。別関数としてきったほうがいい気がするけどいったんここにべた書きで
     # なお、playlog.tsvはgitで管理しない
+
     play_log_filepath = here + '/../data/uni_datas/mydatas/playlog/playlog.tsv'
     with open(play_log_filepath, 'a') as fh:
       fh.write(play_log["play_date"] + "\t" + \
@@ -59,7 +68,8 @@ Miss            ：" + play_log["miss"]
         play_log["justice_critical"] + "\t" + \
         play_log["justice"] + "\t" + \
         play_log["attack"] + "\t" + \
-        play_log["miss"] + "\n"
+        play_log["miss"] + "\t" + \
+        str(is_newrecord) + "\n"
       )
 
     sleep (120)
