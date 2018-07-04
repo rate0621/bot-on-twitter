@@ -13,7 +13,7 @@ import uniauth
 
 
 now = datetime.now()
-past = timedelta(minutes=30)
+past = timedelta(minutes=35)
 since = now - past
 
 ## datetime.nowで得られた日付を[yyyy-mm-dd HH:MM]の形式にするためいったん文字列にする
