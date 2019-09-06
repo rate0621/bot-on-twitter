@@ -2,7 +2,7 @@ authkey.py
 .python-version
 __pycache__
 common_lib/markov/chain.db
-lib/tweet.txt
+tweet.txt
 auth_file/
 .DS_Store
 playlog.tsv

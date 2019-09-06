@@ -13,10 +13,9 @@ from pprint import pprint
 here = os.path.join( os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(here)
 
+import libs as Libs
 import auth_file.authkey as authkey
-import common_lib.uni_common_tools.ChunithmNet as ChunithmNet
-import common_lib.markov.PrepareChain as PrepareChain
-import common_lib.markov.GenerateText as GenerateText
+#import common_lib.uni_common_tools.ChunithmNet as ChunithmNet
 
 class Twitter():
     def __init__(self):
@@ -107,72 +106,6 @@ class Twitter():
 
         return tweet_list
 
-    def __output_to_file(self, tweet_list):
-        """
-        !!ファイルに出力するのはこのクラスに実装すべきではないので外出しする!!
-        get_tweet_specific_userやget_tweet_including_wordsなどから返ってきたtweet_listをテキストファイルに出力
-        @param tweet_list(json)
-        @return file_name(string)
-        """
-
-        file_name = here + "/common_lib/tweet.txt"
-
-        with open(file_name, "w") as f:
-            # https://api.twitter.com/1.1/search/tweets.jsonから取得したときのループ
-            if 'statuses' in tweet_list:
-                for tweet in tweet_list["statuses"]:
-                    tweet_text = tweet["text"]
-                    tweet_text = re.sub(r'https?://[\w/:%#\$&\?\(\)~\.=\+\-…]+', "", tweet_text)  # http(s)的な文字列の削除
-                    tweet_text = re.sub(r'@\w+', "", tweet_text) # 「@hogehoge 今日暇？」 を、「今日暇？」に書き換え
-
-                    f.write(tweet_text)
-                    f.flush()
-
-            # https://api.twitter.com/1.1/statuses/user_timeline.jsonから取得したときのループ
-            else:
-                for tweet in tweet_list:
-                    tweet_text = tweet["text"]
-                    tweet_text = re.sub(r'https?://[\w/:%#\$&\?\(\)~\.=\+\-…]+', "", tweet_text)  # http(s)的な文字列の削除
-                    tweet_text = re.sub(r'@\w+', "", tweet_text) # 「@hogehoge 今日暇？」 を、「今日暇？」に書き換え
-
-                    f.write(tweet_text)
-                    f.flush()
-        
-        return file_name
-
-    def tweet_markov_from_specific_user(self, screen_name):
-        """
-        !!マルコフ連鎖で文章を作るのも外だしする!!
-        渡されたscreen_name（ユーザ名）の過去のツイートを取得してマルコフ連鎖を用いて文章を生成して呟く
-        @param  screen_name(string)
-        @return なし
-        """
-        tweet_list = self.get_tweet_specific_user(screen_name)
-        file_name = self.__output_to_file(tweet_list)
-        chain = PrepareChain.PrepareChain(file_name)
-        triplet_freqs = chain.make_triplet_freqs()
-        chain.save(triplet_freqs, True)
-        generator = GenerateText.GenerateText(2)
-        gen_text = generator.generate()
-        #tw.post_tweet(gen_text + "【このツイートは自動生成されたものです】")
-        print (gen_text + "【このツイートは自動生成されたものです】")
-
-    def tweet_markov_from_specific_word(self, search_word):
-        """
-        !!マルコフ連鎖で文章を作るのも外だしする!!
-        渡されたsearch_word（検索文字列）を含むツイートを取得してマルコフ連鎖を用いて文章を生成して呟く
-        @param  search_word(string)
-        @return なし
-        """
-        tweet_list = self.get_tweet_including_words(search_word)
-        file_name = self.__output_to_file(tweet_list)
-        chain = PrepareChain.PrepareChain(file_name)
-        triplet_freqs = chain.make_triplet_freqs()
-        chain.save(triplet_freqs, True)
-        generator = GenerateText.GenerateText(4)
-        gen_text = generator.generate()
-        #tw.post_tweet(gen_text + "【このツイートは自動生成されたものです】")
-        print (gen_text + "【このツイートは自動生成されたものです】")
 
     def streaming(self, follow=None, track=None):
         """
@@ -214,7 +147,7 @@ class Twitter():
 if __name__ == '__main__':
     tw = Twitter()
     #tw.tweet_markov_from_specific_user("chatrate")
-    tw.tweet_markov_from_specific_word("プリコネ")
+    #tw.tweet_markov_from_specific_word("プリコネ")
     
     #tw.get_userid_from_screen_name("chatrate")
     #tw.user_stream()
