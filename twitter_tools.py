@@ -28,7 +28,7 @@ class TwitterTools(Twitter):
         chain = PrepareChain.PrepareChain(file_name)
         triplet_freqs = chain.make_triplet_freqs()
         chain.save(triplet_freqs, True)
-        generator = GenerateText.GenerateText(4)
+        generator = GenerateText.GenerateText(3)
         gen_text = generator.generate()
         #tw.post_tweet(gen_text + "【このツイートは自動生成されたものです】")
         print (gen_text + "【このツイートは自動生成されたものです】")
