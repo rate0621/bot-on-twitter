@@ -98,7 +98,7 @@ class Twitter():
             "screen_name": screen_name.encode("utf-8"),
             "include_rts": "false",
             "exclude_replies": "false",
-            "count": "200"
+            "count": "300"
         }
 
         res = self.twitter.get(url, params = params)

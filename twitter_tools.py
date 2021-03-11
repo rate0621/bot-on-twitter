@@ -31,7 +31,7 @@ class TwitterTools(Twitter):
         generator = GenerateText.GenerateText(3)
         gen_text = generator.generate()
         #tw.post_tweet(gen_text + "【このツイートは自動生成されたものです】")
-        print (gen_text + "【このツイートは自動生成されたものです】")
+        return gen_text
 
 
     def tweet_markov_from_specific_word(self, search_word):
