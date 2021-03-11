@@ -143,9 +143,31 @@ class Twitter():
             if line:
                 print (line)
 
+    def get_follower_list(self, screen_name):
+        '''
+        渡されたscreen_nameのフォロワーを取得
+        '''
+        count = 100
+        followers_info = []
+        params = {'count': count,'screen_name': screen_name}
+
+        get_friends_url = "https://api.twitter.com/1.1/followers/list.json"
+        #get_friends_url = "https://api.twitter.com/1.1/friends/list.json"
+        res = self.twitter.get(get_friends_url, params=params)
+        result_json = json.loads(res.text)
+        if res.status_code == 200 and len(result_json['users']) != 0:
+            for user in result_json['users']:
+                followers_info.append({'screen_name': user['screen_name'], 'id': user['id']})
+
+        for follower in followers_info:
+            print (follower['screen_name'])
+
+
 
 if __name__ == '__main__':
+    screen_name = 'chunithm_chat'
     tw = Twitter()
+    tw.get_follower_list(screen_name)
     #tw.tweet_markov_from_specific_user("chatrate")
     #tw.tweet_markov_from_specific_word("プリコネ")
     
